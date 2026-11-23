@@ -1,0 +1,20 @@
+services:
+  db:
+    image: mariadb:12.3
+    environment:
+      MARIADB_DATABASE: FlyAtlas2
+      MARIADB_USER: fly
+      MARIADB_PASSWORD: atlas
+      MARIADB_RANDOM_ROOT_PASSWORD: "yes"
+    ports:
+      - "127.0.0.1:3307:3306"
+    volumes:
+      - ./data/raw/flyatlas2-2025-03-03.sql:/docker-entrypoint-initdb.d/flyatlas2.sql:ro
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      start_period: 10m
+
+volumes:
+  db_data:
